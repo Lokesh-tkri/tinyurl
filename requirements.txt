@@ -1,0 +1,3 @@
+Flask=1.1.2
+Cryptography=3.0
+PyMySQL=0.10.0
