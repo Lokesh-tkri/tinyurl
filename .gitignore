@@ -2,3 +2,5 @@ scripts/__pycache__/mainscr.cpython-37.pyc
 scripts/templates/urlpage.html
 .vscode/launch.json
 __pycache__/app.cpython-37.pyc
+scripts/config.py
+scripts/__pycache__/config.cpython-37.pyc

@@ -1,10 +1,11 @@
 from flask import Flask, escape, request, render_template, redirect
 from hashlib import sha256
 from pymysql import connect as con
-import pymysql as pys
+from config import configs
 
 app = Flask(__name__)
 
+cfs = configs()
 
 @app.route('/')
 def hello():
@@ -14,11 +15,11 @@ def hello():
 def urlpage():
     url = request.form["furl"]
     hashcode = str(sha256(url.encode('utf-8')).hexdigest()[:8])
-    db = con("localhost", "test", "mysql.567", "myperdb")
+    db = con(cfs.machinename, cfs.username, cfs.password, cfs.dbase)
     cursor = db.cursor()
-    sqlquery = f"insert into urls (oriurl, hashurl) values('{url}','{hashcode}')"
+    sqlquery = f"insert into urls (oriurl, hashurl) values(%s,%s)"
     try:
-        cursor.execute(sqlquery)
+        cursor.execute(sqlquery,(str(url), str(hashcode)))
         db.commit()
     except:
         db.rollback()
@@ -29,11 +30,11 @@ def urlpage():
 
 @app.route('/<urllink>')
 def newpage(urllink = None):
-    db = con("localhost", "test", "mysql.567", "myperdb")
+    db = con(cfs.machinename, cfs.username, cfs.password, cfs.dbase)
     cursor = db.cursor()
-    sqlquery = f"select oriurl from urls where hashurl = '{urllink}'"
+    sqlquery = f"select oriurl from urls where hashurl = (%s)"
     try:
-        cursor.execute(sqlquery)
+        cursor.execute(sqlquery,(str(urllink)))
         result = cursor.fetchall()
         db.close()
         return redirect(result[0][0])
